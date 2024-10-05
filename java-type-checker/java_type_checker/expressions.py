@@ -78,12 +78,14 @@ class JavaAssignment(JavaExpression):
     def static_type(self):
         return self.lhs.static_type()
     def check_types(self):
+        self.rhs.check_types()
         if self.rhs.static_type().is_subtype_of(self.lhs.static_type()):
             return
         raise JavaTypeMismatchError("Cannot assign {0} to variable {1} of type {2}".format(
           self.rhs.static_type().name,
           self.lhs.name,
           self.lhs.static_type().name))
+
 
 
 class JavaMethodCall(JavaExpression):
@@ -108,19 +110,36 @@ class JavaMethodCall(JavaExpression):
         self.args = args
     def static_type(self):
         return self.receiver.static_type().method_named(self.method_name).return_type
+    
     def check_types(self):
+        self.receiver.check_types()
+
         self.receiver.static_type().method_named(self.method_name)
-        length = len(self.receiver.static_type().method_named(self.method_name).parameter_types)
-        if (length != len(self.args)):
-            raise JavaArgumentCountError("Wrong number of arguments for {0}.{1}(): expected {2}, got {3}".format(
-                self.receiver.static_type().name,
-                self.method_name,
+        x = self.receiver.static_type().method_named(self.method_name).parameter_types
+        length = len(x)
+        callName = self.receiver.static_type().name + "." + self.method_name + "()"
+
+        if length != len(self.args):
+            raise JavaArgumentCountError("Wrong number of arguments for {0}: expected {1}, got {2}".format(
+                callName,
                 length,
                 len(self.args)
             ))
+        
+        TypeArgs = []
+        for item in self.args:
+            TypeArgs.append(item.static_type())
+            item.check_types()
+        
+        for (itemX, itemA) in zip(x, TypeArgs):
+            if not(itemA.is_subtype_of(itemX)):
+                raise JavaTypeMismatchError("{0} expects arguments of type {1}, but got {2}".format(
+                    callName,
+                    _names(x),
+                    _names(TypeArgs)
+                ))
 
-
-
+        
 
 class JavaConstructorCall(JavaExpression):
     """

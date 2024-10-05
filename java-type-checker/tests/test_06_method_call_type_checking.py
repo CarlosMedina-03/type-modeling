@@ -80,46 +80,46 @@ class TestMethodTypeChecking(TypeTest):
                 JavaLiteral("0.0", JavaBuiltInTypes.DOUBLE),
                 JavaLiteral("true", JavaBuiltInTypes.BOOLEAN)))
 
-    # def test_05_allows_subtypes_for_arguments(self):
-    #     # For example:
-    #     #
-    #     #     Rectangle rect;
-    #     #     Color red;
-    #     #
-    #     #     rect.setFillColor(red)
-    #     #
-    #     self.assertNoCompileErrors(
-    #         JavaMethodCall(
-    #             JavaVariable("rect", Graphics.rectangle),
-    #             "setFillColor",
-    #             JavaVariable("red", Graphics.color)))
+    def test_05_allows_subtypes_for_arguments(self):
+        # For example:
+        #
+        #     Rectangle rect;
+        #     Color red;
+        #
+        #     rect.setFillColor(red)
+        #
+        self.assertNoCompileErrors(
+            JavaMethodCall(
+                JavaVariable("rect", Graphics.rectangle),
+                "setFillColor",
+                JavaVariable("red", Graphics.color)))
 
-    # def test_06_supports_complex_expression_as_receiver(self):
-    #     # For example:
-    #     #
-    #     #     Rectangle rect;
-    #     #     rect.getSize().getWidth()
-    #     #
-    #     self.assertNoCompileErrors(
-    #         JavaMethodCall(
-    #             JavaMethodCall(
-    #                 JavaVariable("rect", Graphics.rectangle),
-    #                 "getSize"),
-    #             "getWidth"))
+    def test_06_supports_complex_expression_as_receiver(self):
+        # For example:
+        #
+        #     Rectangle rect;
+        #     rect.getSize().getWidth()
+        #
+        self.assertNoCompileErrors(
+            JavaMethodCall(
+                JavaMethodCall(
+                    JavaVariable("rect", Graphics.rectangle),
+                    "getSize"),
+                "getWidth"))
 
-    # def test_07_cannot_call_methods_on_primitives(self):
-    #     # For example:
-    #     #
-    #     #     int x;
-    #     #
-    #     #     x.hashCode()
-    #     #
-    #     self.assertCompileError(
-    #         NoSuchJavaMethod,
-    #         "Type int does not have methods",
-    #         JavaMethodCall(
-    #             JavaVariable("x", JavaBuiltInTypes.INT),
-    #             "hashCode"))
+    def test_07_cannot_call_methods_on_primitives(self):
+        # For example:
+        #
+        #     int x;
+        #
+        #     x.hashCode()
+        #
+        self.assertCompileError(
+            NoSuchJavaMethod,
+            "Type int does not have methods",
+            JavaMethodCall(
+                JavaVariable("x", JavaBuiltInTypes.INT),
+                "hashCode"))
 
 
 if __name__ == '__main__':
